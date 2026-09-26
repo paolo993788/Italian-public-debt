@@ -2,6 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white)
+![R](https://img.shields.io/badge/R-4.2%2B-276DC3?logo=r&logoColor=white)
 ![pybind11](https://img.shields.io/badge/bindings-pybind11-5C6BC0)
 ![Tests](https://img.shields.io/badge/tests-pytest-0A9EDC?logo=pytest&logoColor=white)
 ![Data](https://img.shields.io/badge/data-Eurostat%20%7C%20IMF-2E7D32)
@@ -60,6 +61,7 @@ The charts are drawn by `python -m public_debt.readme_figures` from the same dat
 | [3. Macro and micro drivers](notebooks/growth_drivers/03_macro_micro_drivers.ipynb) | Why has Italy grown less, and what would closing the employment and productivity gaps be worth for the debt? | Eurostat national accounts, labour market, demography, R&D, bond yields |
 | [4. Sustainability and policy options](notebooks/sustainability/04_debt_sustainability_and_policy_options.ipynb) | Where is the debt heading, how large an adjustment is needed, and which policy mix works best? | Eurostat, model-based scenarios |
 | [Guide: how to read Italy's public accounts](docs/reading_public_accounts.md) | State budget versus general government, balances, budget cycle, data sources, analysis workflow, glossary | |
+| [Fiscal econometrics in R](notebooks/r_crosschecks/fiscal_econometrics_r.ipynb) (R) | Do R's econometric packages reproduce the decomposition, output gap and fiscal reaction estimates, and when did fiscal regimes change? | Eurostat `gov_10dd_edpt1`, `nama_10_gdp` |
 
 ## Architecture
 
@@ -85,12 +87,14 @@ python -m pytest tests/public_debt
 
 Open the notebooks in Visual Studio Code (extensions *Python*, *Jupyter* and *C/C++*) in numerical order and select the `.venv` environment as kernel. Official data are downloaded and cached on first use; `PUBLIC_DEBT_DATA_MODE=synthetic` runs them offline on random placeholder data.
 
+The notebooks are stored with the outputs of a full run on official data (September 2026), so tables and charts can be read directly on GitHub. The R notebooks in [`notebooks/r_crosschecks/`](notebooks/r_crosschecks/README.md) recompute the main results with independent R packages; they need R 4.2 or later: run `Rscript notebooks/r_crosschecks/install_packages.R` once and select the **R** kernel.
+
 ## Repository layout
 
 ```text
 .
 ├── scripts/public_debt/   C++ engine (cpp/), Python package, build and dependency files
-├── notebooks/             debt_dynamics/, public_accounts/, growth_drivers/, sustainability/
+├── notebooks/             debt_dynamics/, public_accounts/, growth_drivers/, sustainability/, r_crosschecks/ (R)
 ├── docs/                  guide to the public accounts, project template, publishing workflow
 ├── tests/public_debt/     validation suite (pytest)
 ├── data/                  download cache and optional external series (ignored by Git)

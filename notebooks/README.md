@@ -7,3 +7,5 @@ Before publishing a notebook, restart the kernel and run all cells in order. Rem
 Add every published notebook to the catalogue in the [main README](../README.md).
 
 The notebooks of this repository are numbered in reading order: `debt_dynamics/01`, `public_accounts/02`, `growth_drivers/03`, `sustainability/04`.
+
+Notebooks are published with their outputs, produced by a full run on official data, so that tables and charts can be read on GitHub without running them. `r_crosschecks/` contains R notebooks that verify the main results with independent R packages.
