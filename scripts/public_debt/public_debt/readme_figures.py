@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import accounting, data, dsa, synthetic
+from . import accounting, data, dsa, fiscal_space as fs, synthetic
 from .figstyle import band, end_label, header, new_figure, percent_axis, point_label, render
 from .var import fit_var1
 
@@ -176,8 +176,43 @@ def fan_chart(t, d):
     return fig
 
 
-FIGURES = {"debt_ratio": debt_ratio, "debt_decomposition": decomposition, "spending_gap": spending_gap,
-           "debt_fan_chart": fan_chart}
+def load_spreads(official=True) -> dict:
+    """Euro-area spread regression of notebook 5 (country and year effects, debt slope changing in 2009)."""
+    panel = fs.panel_dataset(fs.ADVANCED_EU, official=official)
+    res = fs.spread_regression(panel, fs.EURO_AREA_SPREAD, 1999, 2009, time_effects=True, lags=2)
+    source = ("Source: Eurostat irt_lt_mcby_a, gov_10dd_edpt1, nama_10_gdp; panel of nine euro-area countries" if official
+              else "Placeholder data, not official statistics")
+    return {"spread": fs.fundamental_spread(res, "IT"), "slope": fs.wald_test(res, ["debt_lag", "debt_lag x post"]),
+            "source": source}
+
+
+def spread_fundamentals(t, d):
+    f = d["spread"].loc[2005:]
+    fig, ax = new_figure(t)
+    fig.subplots_adjust(right=0.97, bottom=0.14, top=0.76)
+    ax.bar(f.index, f["residual"], 0.7, color=t["series"][1], alpha=0.85, label="not explained by fundamentals", zorder=2)
+    ax.plot(f.index, f["actual"], color=t["series"][0], lw=2.2, marker="o", ms=4, label="BTP-Bund spread", zorder=3)
+    ax.plot(f.index, f["fundamental"], color=t["ink2"], lw=1.4, ls=(0, (4, 2)), label="explained by fundamentals", zorder=3)
+    ax.axhline(0, color=t["axis"], lw=1)
+    for year, text, above in ((2012, "euro crisis", True), (2018, "budget dispute", True), (2025, "below\nfundamentals", False)):
+        if year in f.index:
+            y = max(f.loc[year, "actual"], f.loc[year, "fundamental"]) if above else f.loc[year, "actual"]
+            ax.annotate(text, (year, y), xytext=(0, 8 if above else -9), textcoords="offset points", ha="center",
+                        va="bottom" if above else "top", fontsize=8, color=t["ink2"])
+    ax.set_ylabel("percentage points")
+    ax.legend(loc="upper right", ncol=3, fontsize=8.5)
+    ax.set_ylim(min(-0.8, f["residual"].min() * 1.3), f["actual"].max() * 1.35)
+    header(fig, t, "Markets priced Italian debt above fundamentals in 2012 and 2018, below them now",
+           "10-year BTP-Bund spread (annual average) and the part explained by debt, primary balance, growth and common\n"
+           f"euro-area shocks; since 2009 each 100 points of GDP of debt add {d['slope']['estimate']:.1f} points of spread",
+           d["source"])
+    return fig
+
+
+FIGURES = {"debt_ratio": (debt_ratio, "main"), "debt_decomposition": (decomposition, "main"),
+           "spending_gap": (spending_gap, "main"), "debt_fan_chart": (fan_chart, "main"),
+           "spread_fundamentals": (spread_fundamentals, "spreads")}
+LOADERS = {"main": load, "spreads": load_spreads}
 
 
 def main(argv=None):
@@ -185,12 +220,18 @@ def main(argv=None):
     parser.add_argument("--out", default=str(data.repository_root() / "docs" / "figures"))
     parser.add_argument("--synthetic", action="store_true", help="use offline placeholder data")
     parser.add_argument("--paths", type=int, default=100_000)
+    parser.add_argument("--only", nargs="*", choices=list(FIGURES), help="draw only these figures")
     args = parser.parse_args(argv)
     import matplotlib
     matplotlib.use("Agg")
-    d = load(official=not args.synthetic, n_paths=args.paths)
-    for name, builder in FIGURES.items():
-        for path in render(builder, name, Path(args.out), d):
+    names = args.only or list(FIGURES)
+    inputs = {}
+    for key in {FIGURES[n][1] for n in names}:
+        inputs[key] = (load(official=not args.synthetic, n_paths=args.paths) if key == "main"
+                       else LOADERS[key](official=not args.synthetic))
+    for name in names:
+        builder, key = FIGURES[name]
+        for path in render(builder, name, Path(args.out), inputs[key]):
             print(path)
 
 
