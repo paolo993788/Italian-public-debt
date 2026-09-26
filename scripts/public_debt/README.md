@@ -41,6 +41,8 @@ Downloads are cached in `data/raw/` (ignored by Git); `PUBLIC_DEBT_DATA_DIR` cha
 
 Figures and tables in `outputs/debt_history/`, `outputs/public_accounts/`, `outputs/growth_drivers/` and `outputs/sustainability/`.
 
+The README charts are drawn by `python -m public_debt.readme_figures` (official data; `--synthetic` for an offline check) and saved in a light and a dark variant in `docs/figures/`, the only generated files committed to the repository.
+
 ## Method
 
 **Units.** Ratios are fractions of GDP and rates decimals in the code; charts and tables show percentages.
@@ -57,7 +59,7 @@ Figures and tables in `outputs/debt_history/`, `outputs/public_accounts/`, `outp
 
 ## Verification
 
-Run `python -m pytest tests/public_debt` (19 tests, about 2 seconds):
+Run `python -m pytest tests/public_debt` (20 tests, about 10 seconds):
 
 | Check | Tolerance |
 | --- | --- |

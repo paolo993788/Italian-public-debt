@@ -26,6 +26,30 @@ Figures computed in the notebooks from Eurostat data (excessive deficit procedur
 
 Figures before 1995 come from the Bank of Italy literature cited in the notebooks; the IMF series used for the long view starts in 1988.
 
+## Charts
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/debt_ratio-dark.png">
+  <img alt="Line chart of general government debt, % of GDP, 1995-2025: Italy falls from 119.1% in 1995 to 103.5% in 2007, peaks at 154.4% in 2020 and is at 137.1% in 2025; the EU27 is at 81.7%; the IMF projects Italy at about 137% in 2030." src="docs/figures/debt_ratio-light.png">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/debt_decomposition-dark.png">
+  <img alt="Stacked bars of contributions to the change in Italy's debt ratio by period: interest adds between 7 and 41 points in every period; primary surpluses reduced the ratio until 2019; the recessions of 2008-2013 added 10 points; inflation reduced it by 18 points in 2022-2025." src="docs/figures/debt_decomposition-light.png">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/spending_gap-dark.png">
+  <img alt="Horizontal bars of Italy minus EU27 expenditure by function in 2024: old-age pensions +3.2 points of GDP, interest +2.1, survivors +0.9; sickness and disability -1.1, health -0.7, education -0.7, family and children -0.5." src="docs/figures/spending_gap-light.png">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/debt_fan_chart-dark.png">
+  <img alt="Two fan charts of stochastic debt projections to 2035: with no policy change the median stays near 138% of GDP and the probability of a higher debt than in 2025 is 52%; with a primary balance improving by 0.5 points a year for seven years the median falls to about 113% and the probability is 9%." src="docs/figures/debt_fan_chart-light.png">
+</picture>
+
+The charts are drawn by `python -m public_debt.readme_figures` from the same data and engines as the notebooks (light and dark variants in `docs/figures/`).
+
 ## Catalogue
 
 | Item | Question | Data |
