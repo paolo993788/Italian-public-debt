@@ -31,8 +31,8 @@ In Visual Studio Code, install the *Python*, *Jupyter* and *C/C++* extensions, s
 | `nama_10_gdp` | Eurostat | GDP at current prices (CP_MEUR) and real growth (CLV_PCH_PRE) |
 | `gov_10a_main`, `gov_10a_exp` | Eurostat | Revenue and expenditure by ESA 2010 item and by COFOG function, % of GDP |
 | `irt_lt_mcby_a` | Eurostat | 10-year government bond yields (convergence criterion) |
-| `nama_10_pe`, `demo_pjanind`, `lfsi_emp_a`, `rd_e_gerdtot` | Eurostat | Population, employment, hours, working-age share, employment rates, old-age dependency, R&D |
-| `GGXWDG_NGDP` | IMF DataMapper (World Economic Outlook) | Gross debt, % of GDP, from 1980 |
+| `nama_10_pe`, `nama_10_a10_e`, `demo_pjanind`, `lfsi_emp_a`, `rd_e_gerdtot` | Eurostat | Population, employment, hours worked, working-age share (100 minus the shares aged 0-14 and 65+), employment rates, old-age dependency, R&D |
+| `GGXWDG_NGDP` | IMF DataMapper (World Economic Outlook) | Gross debt, % of GDP (for Italy from 1988, with projections) |
 | `data/external/debt_1861.csv` (optional) | User-provided, for example the Bank of Italy series of Francese and Pace (2008) | Columns `year,debt_pct`; read if present, never downloaded or committed |
 
 Downloads are cached in `data/raw/` (ignored by Git); `PUBLIC_DEBT_DATA_DIR` changes the base folder. Eurostat and IMF data may be reused with acknowledgement of the source. Codes are selected after download; if Eurostat renames a code, the error message lists the available ones.
@@ -47,7 +47,7 @@ Figures and tables in `outputs/debt_history/`, `outputs/public_accounts/`, `outp
 
 **Debt decomposition** (`public_debt/accounting.py`): $d_t - d_{t-1} = -pb_t + d_{t-1}(i_t-\gamma_t)/(1+\gamma_t) + sfa_t$, with the snowball split into interest $d_{t-1}i_t/(1+\gamma_t)$, real growth $-d_{t-1}g_t/(1+\gamma_t)$ and inflation $-d_{t-1}\pi_t(1+g_t)/(1+\gamma_t)$ effects (European Commission convention). The effective rate is interest paid over the previous year's debt, $i_t = \text{int}_t(1+\gamma_t)/d_{t-1}$; the stock-flow adjustment is the residual. Counterfactuals replay the identity with modified components and observed stock-flow adjustments.
 
-**Fiscal analysis** (`public_debt/fiscal.py`): Hodrick-Prescott output gap ($\lambda = 100$), cyclically adjusted balance with semi-elasticity 0.55, fiscal stance as the change in the cyclically adjusted primary balance, Bohn (1998) fiscal reaction function with Newey-West standard errors.
+**Fiscal analysis** (`public_debt/fiscal.py`): Hodrick-Prescott output gap ($\lambda = 100$), cyclically adjusted balance with semi-elasticity 0.55, fiscal stance as the change in the cyclically adjusted primary balance, Bohn (1998) fiscal reaction function with Newey-West standard errors, optional indicator variables for exceptional years and sample restrictions.
 
 **Growth accounting** (`public_debt/growth.py`): exact log decomposition of GDP per capita growth into productivity per hour, hours per worker, employment rate and working-age share.
 
@@ -68,7 +68,7 @@ Run `python -m pytest tests/public_debt` (19 tests, about 2 seconds):
 | Decomposition closes the identity; stock-flow adjustments of synthetic data recovered exactly | $10^{-12}$ to $10^{-15}$ |
 | Counterfactual without changes reproduces history; one point more of primary balance lowers next year's debt by one point | $10^{-12}$ |
 | HP filter limits (a line is its own trend; no smoothing as lambda goes to 0); OLS and White/Newey-West standard errors | $10^{-8}$ to $10^{-12}$ |
-| Fiscal reaction and VAR(1) recover known parameters from simulated data | 0.02-0.1 (sampling error) |
+| Fiscal reaction and VAR(1) recover known parameters from simulated data; an indicator variable absorbs an exceptional shift without biasing the debt response | 0.005-0.1 (sampling error) |
 | Growth decomposition is exact | $10^{-14}$ |
 | Eurostat JSON-stat and IMF parsers; offline assembly of the fiscal dataset from cached files | exact |
 

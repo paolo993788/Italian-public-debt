@@ -9,18 +9,22 @@
 
 **Why Italy's public debt is so high, how to read the public accounts, and what it would take to reduce the debt: an evidence-based analysis with official Eurostat and IMF data, Python notebooks and a C++ engine for stochastic debt sustainability.**
 
-Italy's general government debt is around 135% of GDP, the second highest in the euro area. This repository reconstructs how it was built, measures the role of primary deficits, interest rates, growth and inflation, compares the structure of spending and revenues with Germany, France, Spain and the EU, analyses the macroeconomic and microeconomic causes of weak growth, and quantifies the options to put the debt ratio on a durably declining path.
+Italy's general government debt was 137.1% of GDP in 2025, the second highest in the euro area. This repository reconstructs how it was built, measures the role of primary deficits, interest rates, growth and inflation, compares the structure of spending and revenues with Germany, France, Spain and the EU, analyses the macroeconomic and microeconomic causes of weak growth, and quantifies the options to put the debt ratio on a durably declining path.
 
-## What the analysis shows
+## What the data show
 
-- **The debt was built mainly in the 1970s and 1980s.** Spending commitments (pensions, public employment, health, regional governments) grew without matching revenues; after the 1981 end of monetary financing, real interest rates rose above growth while primary deficits persisted for a decade. The ratio rose from about 57% of GDP in 1980 to about 120% in 1994.
-- **The 1990s show that consolidation can work**: emergency budgets after the 1992 crisis, pension reforms, privatisations and primary surpluses, together with falling rates on the way to the euro, reduced the ratio.
-- **The euro dividend was only partly saved**: in the 2000s lower interest spending was accompanied by an eroding primary surplus and weak growth.
-- **Since 2008 the snowball has dominated**: Italy has run primary surpluses in most years before 2020, but recessions, low nominal growth and spread episodes pushed the ratio up; the pandemic and large building tax credits added deficits in 2020-2023.
-- **Growth is the missing ingredient**: low productivity, low employment of women and young people, small firms, slow justice and administration, low R&D and population ageing weaken the denominator and the tax base.
-- **The way out combines** a gradual but sustained primary surplus above the debt-stabilising level, better spending composition, a broader tax base with a lower tax wedge, growth-enhancing reforms and prudent debt management. Notebook 4 quantifies each lever and the adjustment needed for the debt to decline with high probability.
+Figures computed in the notebooks from Eurostat data (excessive deficit procedure notification and national accounts, downloaded in September 2026) unless stated otherwise.
 
-The figures for the years since 1995 are computed in the notebooks from Eurostat data; earlier figures are approximate values from the Bank of Italy literature cited in the notebooks.
+- **Where the debt stands.** After the pandemic peak (154.4% of GDP in 2020) strong nominal growth brought the ratio down to 133.9% in 2023; it is rising again (134.7% in 2024, 137.1% in 2025) although the primary balance is back in surplus (0.8% of GDP). Interest spending is 3.9% of GDP, twice the EU average, and the building tax credits granted in 2021-2023 are now being used against taxes: they raise the debt without affecting the deficit (stock-flow adjustments of +1.0 and +2.6 points of GDP in 2024 and 2025).
+- **The debt was built mainly in the 1970s and 1980s** (Bank of Italy long-run series): spending commitments grew without matching revenues and, after the 1981 end of monetary financing, real interest rates exceeded growth while primary deficits persisted for a decade. The ratio rose from about 57% of GDP in 1980 to about 120% in 1994.
+- **Since the 1990s the snowball, not the primary balance, has driven the debt.** The primary balance exceeded its debt-stabilising level in 20 of the 30 years since 1996. In 2008-2013 the ratio rose by 28 points: primary surpluses lowered it by 7 points, but interest added 28 and the recessions 10.
+- **Missed opportunities** (mechanical counterfactuals, without feedback effects): keeping the 1997-2000 primary surplus (4.8% of GDP) during the low-rate years 2001-2007 would give a 2025 ratio of about 110% instead of 137%; growing like the EU27 since 2001 about 109%; holding the 2020-2023 primary balance at its 2019 level about 113%; an effective interest rate one point lower since 2012 about 120%.
+- **Budget structure** (COFOG 2024, % of GDP): old-age pensions 13.9 against 10.7 in the EU, interest 4.0 against 1.9; less than the EU on education (4.0 against 4.7), health (6.6 against 7.3) and family benefits (1.5 against 2.0).
+- **Fiscal policy has not reacted systematically to debt**: in a Bohn (1998) regression on 1996-2025 the response of the primary balance to the debt ratio is not positive in any specification (full sample, pandemic and tax-credit dummies, pre-pandemic sample).
+- **Growth is the missing ingredient**: real GDP grew by 0.4% a year in 2001-2025 against 1.4% in the EU27. The employment rate (20-64) is 67.6% against 76.1% in the EU, 58.0% against 71.3% for women; R&D spending is 1.4% of GDP against 2.2%. Closing the employment gap over ten years would bring the ratio to about 114% in 2035 instead of about 136%.
+- **The way out.** With no policy change the ratio stays around 136% in 2035 and the probability that it is higher than today is about 52%. A structural adjustment of 0.25 points of GDP a year for seven years brings that probability to about 25%; a package of spending review, tax compliance and growth reforms lowers the 2035 ratio by about 17 points, to about 119%. Notebook 4 compares these levers, their risks and the EU fiscal rules.
+
+Figures before 1995 come from the Bank of Italy literature cited in the notebooks; the IMF series used for the long view starts in 1988.
 
 ## Catalogue
 

@@ -72,13 +72,23 @@ def ols(y, X, newey_west_lags=None):
     return {"coef": beta, "se": se, "t": t, "p": p, "r2": r2, "n": n, "resid": e}
 
 
-def fiscal_reaction(fiscal: pd.DataFrame, gap: pd.Series, lags=2) -> pd.DataFrame:
-    """Bohn (1998) regression of the primary balance on lagged debt and the output gap."""
+def fiscal_reaction(fiscal: pd.DataFrame, gap: pd.Series, lags=2, dummies=None, years=None) -> pd.DataFrame:
+    """Bohn (1998) regression of the primary balance on lagged debt and the output gap.
+
+    `dummies` maps a label to the years in which an indicator variable equals one (for example
+    exceptional pandemic years); `years` restricts the sample to an inclusive (first, last) range.
+    """
     frame = pd.DataFrame({"pb": fiscal["primary_balance"], "debt_lag": fiscal["debt"].shift(1),
                           "gap": gap.reindex(fiscal.index)}).dropna()
-    X = np.column_stack([np.ones(len(frame)), frame["debt_lag"], frame["gap"]])
-    res = ols(frame["pb"], X, newey_west_lags=lags)
+    if years is not None:
+        frame = frame.loc[years[0]:years[1]]
+    columns = [np.ones(len(frame)), frame["debt_lag"], frame["gap"]]
+    names = ["constant", "lagged debt ratio (rho)", "output gap"]
+    for label, dummy_years in (dummies or {}).items():
+        columns.append(frame.index.isin(list(dummy_years)).astype(float))
+        names.append(label)
+    res = ols(frame["pb"], np.column_stack(columns), newey_west_lags=lags)
     table = pd.DataFrame({"coefficient": res["coef"], "std. error (Newey-West)": res["se"], "t": res["t"], "p-value": res["p"]},
-                         index=["constant", "lagged debt ratio (rho)", "output gap"])
+                         index=names)
     table.attrs.update(r2=res["r2"], n=res["n"], years=f"{frame.index.min()}-{frame.index.max()}")
     return table
