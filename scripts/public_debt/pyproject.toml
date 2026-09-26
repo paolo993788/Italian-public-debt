@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64", "wheel", "pybind11>=2.12"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "public-debt"
+version = "0.1.0"
+description = "Public debt dynamics, fiscal analysis and C++ stochastic debt sustainability for Italy"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pandas>=2.0",
+]
+
+[tool.setuptools]
+packages = ["public_debt"]
