@@ -11,11 +11,12 @@ Sources (free reuse with acknowledgement of the source):
   - ``gov_10a_main``    revenue and expenditure of general government by ESA 2010 item;
   - ``gov_10a_exp``     expenditure by function (COFOG);
   - ``irt_lt_mcby_a``   10-year government bond yields (Maastricht criterion);
-  - ``nama_10_pe``      population, employment and hours worked;
+  - ``nama_10_pe``      population and employment (national accounts);
+  - ``nama_10_a10_e``   hours worked by employed persons (all industries);
   - ``demo_pjanind``    population structure indicators (old-age dependency, share aged 15-64);
   - ``lfsi_emp_a``      employment rates;  ``rd_e_gerdtot`` R&D expenditure.
 * **IMF DataMapper** API (https://www.imf.org/external/datamapper/api/v1/<indicator>/<country>),
-  World Economic Outlook series such as GGXWDG_NGDP (gross debt, % of GDP) from 1980.
+  World Economic Outlook series such as GGXWDG_NGDP (gross debt, % of GDP; for Italy from 1988).
 * **Optional long-run series**: a CSV placed in ``data/external/`` with the historical
   debt ratio since 1861 published by the Bank of Italy (Francese and Pace, 2008), columns
   ``year,debt_pct``. It is read if present and never downloaded automatically.
@@ -192,19 +193,21 @@ def bond_yields(geos=PEERS, refresh=False) -> pd.DataFrame:
 def labour_and_population(geo="IT", refresh=False) -> pd.DataFrame:
     """Population, employment, hours worked, working-age share and real GDP index for growth accounting."""
     pe = eurostat("nama_10_pe", refresh, geo=geo)
+    hw = eurostat("nama_10_a10_e", refresh, geo=geo, nace_r2="TOTAL", na_item="EMP_DC", unit="THS_HW")
     ind = eurostat("demo_pjanind", refresh, geo=geo)
     gdp = eurostat("nama_10_gdp", refresh, geo=geo, na_item="B1GQ")
     out = pd.DataFrame({
         "population": _series(pe, na_item="POP_NC", unit="THS_PER"),
         "employment": _series(pe, na_item="EMP_DC", unit="THS_PER"),
-        "hours": _series(pe, na_item="EMP_DC", unit="THS_HW"),
-        "working_age_share": _series(ind, indic_de="PC_Y15_64") / 100,
+        "hours": _series(hw, na_item="EMP_DC", unit="THS_HW"),
+        # share of the population aged 15-64 (the dataset publishes the 0-14 and 65+ shares)
+        "working_age_share": 1 - (_series(ind, indic_de="PC_Y0_14") + _series(ind, indic_de="PC_Y65_MAX")) / 100,
     })
     growth = _series(gdp, unit="CLV_PCH_PRE") / 100
     out["real_gdp_index"] = (1 + growth.reindex(out.index).fillna(0)).cumprod()
     out = out.dropna()
     out.index = out.index.astype(int)
-    out.attrs["source"] = f"Eurostat nama_10_pe, demo_pjanind, nama_10_gdp, geo={geo}"
+    out.attrs["source"] = f"Eurostat nama_10_pe, nama_10_a10_e, demo_pjanind, nama_10_gdp, geo={geo}"
     return out
 
 

@@ -38,6 +38,16 @@ def test_fiscal_reaction_recovers_the_response():
     table = fiscal.fiscal_reaction(frame, pd.Series(gap, index=years))
     assert table.loc["lagged debt ratio (rho)", "coefficient"] == pytest.approx(0.06, abs=0.02)
     assert table.loc["output gap", "coefficient"] == pytest.approx(0.5, abs=0.1)
+    # An exceptional shift in two years is absorbed by an indicator variable and does not bias rho.
+    shocked = frame.copy()
+    shocked.loc[[2000, 2001], "primary_balance"] -= 0.06
+    biased = fiscal.fiscal_reaction(shocked, pd.Series(gap, index=years))
+    fixed = fiscal.fiscal_reaction(shocked, pd.Series(gap, index=years), dummies={"shock": [2000, 2001]})
+    assert fixed.loc["shock", "coefficient"] == pytest.approx(-0.06, abs=0.005)
+    assert fixed.loc["lagged debt ratio (rho)", "coefficient"] == pytest.approx(table.loc["lagged debt ratio (rho)", "coefficient"], abs=0.005)
+    assert "shock" not in biased.index
+    sub = fiscal.fiscal_reaction(frame, pd.Series(gap, index=years), years=(1970, 1999))
+    assert sub.attrs["years"] == "1970-1999" and sub.attrs["n"] == 30
 
 
 def test_var1_recovers_dynamics():
