@@ -1,5 +1,6 @@
 # Italian Public Debt
 
+[![CI](https://github.com/paolo993788/italian-public-debt/actions/workflows/ci.yml/badge.svg)](https://github.com/paolo993788/italian-public-debt/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white)
 ![R](https://img.shields.io/badge/R-4.2%2B-276DC3?logo=r&logoColor=white)
@@ -93,6 +94,8 @@ python -m pip install -e scripts/public_debt
 python -m pytest tests/public_debt
 ```
 
+For the exact versions used by CI, install `scripts/public_debt/requirements-lock.txt` instead of `requirements.txt`. The standalone C++ tests and sanitizer builds are described in the [library README](scripts/public_debt/README.md#c-unit-tests-and-sanitizers).
+
 Open the notebooks in Visual Studio Code (extensions *Python*, *Jupyter* and *C/C++*) in numerical order and select the `.venv` environment as kernel. Official data are downloaded and cached on first use; `PUBLIC_DEBT_DATA_MODE=synthetic` runs them offline on random placeholder data.
 
 The notebooks are stored with the outputs of a full run on official data (September 2026), so tables and charts can be read directly on GitHub. The R notebooks in [`notebooks/r_crosschecks/`](notebooks/r_crosschecks/README.md) recompute the main results with independent R packages; they need R 4.2 or later: run `Rscript notebooks/r_crosschecks/install_packages.R` once and select the **R** kernel.
@@ -117,7 +120,7 @@ The notebooks are stored with the outputs of a full run on official data (Septem
 
 ## Development workflow
 
-Changes follow the [publishing workflow](docs/publishing.md). The [`CLAUDE.md`](CLAUDE.md) file provides project instructions for [Claude Code](https://claude.com/claude-code).
+Changes follow the [publishing workflow](docs/publishing.md). Every pull request runs the [CI workflow](.github/workflows/ci.yml): lint, the Python tests on Python 3.10-3.12, the C++ tests with GCC and Clang and under sanitizers, and every notebook offline on synthetic data. The [`CLAUDE.md`](CLAUDE.md) file provides project instructions for [Claude Code](https://claude.com/claude-code).
 
 ## Disclaimer
 

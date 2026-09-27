@@ -7,6 +7,9 @@ Python package with a C++17 engine (pybind11) to analyse Italy's public debt: de
 - Python 3.10 or later (developed and tested with Python 3.11).
 - A C++17 compiler: Visual Studio Build Tools ("Desktop development with C++") on Windows, Xcode Command Line Tools on macOS, GCC 9+ or Clang 10+ on Linux.
 - Python dependencies: [`requirements.txt`](requirements.txt).
+- Development tools: [`requirements-dev.txt`](requirements-dev.txt) (ruff, nbconvert).
+- Exact versions: [`requirements-lock.txt`](requirements-lock.txt) pins the two files above to versions that pass the test suite and execute every notebook (Python 3.11, Linux). CI installs it on Python 3.11 and the unpinned files on 3.10 and 3.12.
+- For the standalone C++ tests: CMake 3.16 or later (Ninja optional).
 
 ## Usage
 
@@ -19,7 +22,14 @@ python -m pip install -r scripts/public_debt/requirements.txt
 python -m pip install -e scripts/public_debt
 python -m pytest tests/public_debt
 python -m public_debt.data --geo IT   # optional: pre-download the Eurostat datasets
+ruff check --select F scripts tests   # lint (pyflakes rules)
+
+# Standalone C++ tests (strict warnings; add -DPD_SANITIZE=address,undefined or =thread)
+cmake -S scripts/public_debt/cpp -B build/cpp -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build build/cpp && ctest --test-dir build/cpp --output-on-failure
 ```
+
+For the exact environment used by CI, install `requirements-lock.txt` instead of `requirements.txt`.
 
 In Visual Studio Code, install the *Python*, *Jupyter* and *C/C++* extensions, select the `.venv` interpreter and use it as the notebook kernel. Set `PUBLIC_DEBT_DATA_MODE=synthetic` to run the notebooks offline on random placeholder data.
 
@@ -80,6 +90,48 @@ Run `python -m pytest tests/public_debt` (25 tests, about 10 seconds):
 | Driscoll-Kraay (zero lags) and cluster-robust standard errors against direct formulas | relative $10^{-10}$ |
 | Debt limit: infinite for a reaction steeper than the stabilising line, undefined below it, equal to the root of the cubic case (brentq), lower with a debt-dependent rate | $10^{-6}$; exact |
 | Draws with zero covariance reproduce the point limit; synthetic panel recovers the gap response and the post-2008 spread slope | $10^{-9}$; 0.1 and $t > 2$ |
+
+## C++ unit tests and sanitizers
+
+**Tests.** The engine is header-only, so [`cpp/CMakeLists.txt`](cpp/CMakeLists.txt) also compiles it without Python. It uses `-Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Wnull-dereference -Wdouble-promotion -Werror` (`/W4 /WX` with MSVC) and bounds-checked standard containers outside Release builds. [`cpp/tests/test_core.cpp`](cpp/tests/test_core.cpp) runs 213 checks without any test framework. The Python suite compares the engine with NumPy implementations; these tests add exact identities, reductions of the stochastic engine to deterministic projections, thread invariance and argument validation on the C++ code alone:
+
+| Check | Tolerance |
+| --- | --- |
+| SplitMix64 and xoshiro256** against the published reference outputs; uniform and normal moments | exact; 4 standard errors |
+| `parallel_for`: same result for 1, 3 and 8 threads; an exception in a task is rethrown | exact |
+| Projection: change in the debt ratio = snowball - primary balance + stock-flow adjustment, interest = $d_{t-1} i_t / (1 + \gamma_t)$, effective-rate recursion; refinancing shares 0 and 1 | $10^{-14}$ to $10^{-15}$; exact |
+| Closed forms: $i_t = r + (i_0 - r)(1 - s)^t$; $d_t = d_0 ((1 + i)/(1 + \gamma))^t$ without primary balance; the debt-stabilising primary balance keeps $d_t = d_0$ | $10^{-15}$ to $10^{-12}$ |
+| Stochastic DSA with degenerate shocks equals the deterministic projection: no shocks, a constant shock (with the growth semi-elasticity), VAR decay with a diagonal and a non-symmetric matrix, the -2% floor on the market rate, the fiscal reaction to the debt ratio written out | $10^{-13}$ to $10^{-14}$ |
+| Residual bootstrap: two residual vectors are drawn with frequency 1/2 each; 1 vs 6 threads with primary-balance noise; argument validation | 4 standard errors; bitwise; exact |
+| Adjustment grid: probabilities in [0, 1], never higher for a larger or longer adjustment (the same shocks are reused), each cell equal to the share computed from the fan chart; argument validation | exact |
+
+**Mutation check.** Eight deliberate bugs were injected into the engine, and each makes the suite fail:
+
+- nominal growth added instead of compounded;
+- the snowball effect not deflated by nominal growth;
+- the market rate lagged one year;
+- the VAR matrix transposed;
+- the floor on the market rate removed;
+- the fiscal reaction halved;
+- the residual bootstrap drawing only half of the residuals;
+- the fiscal adjustment starting one year late.
+
+The transposed VAR matrix was missed until the non-symmetric VAR check was added: a diagonal matrix is its own transpose.
+
+**Sanitizers.** The same tests pass under two sanitizer builds:
+
+- AddressSanitizer with UndefinedBehaviorSanitizer (`-DPD_SANITIZE=address,undefined`): out-of-bounds access, use after free, signed overflow and similar;
+- ThreadSanitizer (`-DPD_SANITIZE=thread`): data races in the parallel Monte Carlo loop.
+
+CI runs both, plus GCC and Clang builds with warnings as errors.
+
+## Continuous integration
+
+[`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) runs on every pull request and on pushes to `main`. It needs no credentials and downloads no data. Its jobs:
+
+1. **Python:** lint (ruff, pyflakes rules) and the test suite, on Python 3.11 with the locked versions and on 3.10 and 3.12 with the newest allowed versions.
+2. **C++:** the standalone tests with GCC and Clang (warnings as errors), and with GCC under ASan/UBSan and under TSan.
+3. **Notebooks:** every Python notebook executed offline on synthetic data. The job checks that the data cache stays empty, i.e. that synthetic mode does not touch the network.
 
 ## References
 
