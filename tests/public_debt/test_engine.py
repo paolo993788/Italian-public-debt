@@ -1,7 +1,6 @@
 """C++ debt engine: identity, stabilisation, deterministic limit of the stochastic model."""
 
 import numpy as np
-import pytest
 
 from public_debt import accounting, dsa, require_cpp
 from public_debt.var import VAR1
