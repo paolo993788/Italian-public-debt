@@ -1,7 +1,6 @@
 """Decomposition of debt dynamics and counterfactual replays."""
 
 import numpy as np
-import pandas as pd
 import pytest
 
 from public_debt import accounting, synthetic

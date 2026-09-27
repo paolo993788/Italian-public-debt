@@ -2,7 +2,6 @@
 
 import json
 
-import numpy as np
 import pytest
 
 from public_debt import data
