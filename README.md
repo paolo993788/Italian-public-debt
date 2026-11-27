@@ -73,14 +73,27 @@ The charts are drawn by `python -m public_debt.readme_figures` from the same dat
 
 ## Architecture
 
-```text
-notebooks/  ──►  public_debt (Python)                    ──►  public_debt._core (C++17, pybind11)
-                 Eurostat and IMF loaders                     debt projection with repricing of the effective rate
-                 debt decomposition, counterfactuals          stochastic DSA: VAR(1) shocks with bootstrap, fiscal reaction
-                 HP output gap, structural balance, Bohn      fiscal-adjustment grids (probability of rising debt)
-                 growth accounting, VAR(1), EU rules checks
-                 panel fiscal fatigue, debt limits, spreads
+Research notebooks call the Python package. Computationally intensive methods are implemented in C++17 and exposed through pybind11.
+
+```mermaid
+flowchart TD
+    N[Research notebooks] --> P[Python package]
+    P --> C[C++17 numerical core]
+    P --> R[Research outputs]
+    T[Tests] -.-> P
+    T -.-> C
 ```
+
+| Component | Source | Responsibility |
+| --- | --- | --- |
+| Data | [`data.py`](scripts/public_debt/public_debt/data.py) | Eurostat and IMF data acquisition. |
+| Public accounts | [`accounting.py`](scripts/public_debt/public_debt/accounting.py), [`fiscal.py`](scripts/public_debt/public_debt/fiscal.py) | Debt accounting and fiscal analysis. |
+| Debt sustainability | [`dsa.py`](scripts/public_debt/public_debt/dsa.py), [`fiscal_space.py`](scripts/public_debt/public_debt/fiscal_space.py) | Stochastic projections and fiscal space. |
+| Numerical core | [C++ source](scripts/public_debt/cpp/) | Numerical kernels and native bindings. |
+| Visualisation | [`figstyle.py`](scripts/public_debt/public_debt/figstyle.py), [`readme_figures.py`](scripts/public_debt/public_debt/readme_figures.py) | Figure styling and reproducible research outputs. |
+| Validation suite | [Python tests](tests/public_debt/), [C++ tests](scripts/public_debt/cpp/tests/) | Numerical and implementation checks. |
+
+Implementation and installation details: [package documentation](scripts/public_debt/README.md).
 
 ## Getting started
 
