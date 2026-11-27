@@ -109,7 +109,7 @@ def decomposition(t, d):
     ax.set_xticks(x, table.index)
     ax.yaxis.set_major_formatter(lambda v, _: f"{v:+.0f}" if v else "0")
     ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5))
-    header(fig, t, "Interest has pushed the debt up in every period",
+    header(fig, t, "Contributions to changes in the public debt ratio",
            "Contributions to the change in the debt ratio by period, percentage points of GDP",
            d["source"].format(datasets="gov_10dd_edpt1, nama_10_gdp") + "; computations in notebook 1")
     return fig
@@ -169,7 +169,7 @@ def fan_chart(t, d):
     from matplotlib.lines import Line2D
     axes[0].legend(handles=[Line2D([], [], color=c, label="median"), Patch(color=c, alpha=t["band"][1], lw=0, label="50% of paths"),
                             Patch(color=c, alpha=t["band"][0], lw=0, label="90% of paths")], loc="lower left", ncol=3)
-    header(fig, t, "Without adjustment the debt ratio is as likely to rise as to fall",
+    header(fig, t, "Debt ratio projections under alternative fiscal scenarios",
            "Stochastic debt projections, % of GDP: 100,000 paths with VAR(1) shocks to growth, inflation and rates",
            d["source"].format(datasets="gov_10dd_edpt1, nama_10_gdp, irt_lt_mcby_a") + "; model in notebook 4, seed 20250101")
     fig.subplots_adjust(top=0.72)
