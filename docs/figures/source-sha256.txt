@@ -1,0 +1,10 @@
+2187185012099341eec097d648306563886c2e7b40a6ef19776d829b3d41edb3  eurostat/gov_10a_exp_geo-IT+DE+FR+ES+EU27_2020_na_item-TE_sector-S13_unit-PC_GDP.json
+d1a2fa1344c73834ef93cdb2dfe4c63f0fb8744c5c0596c0882c6125f9c0a2d5  eurostat/gov_10dd_edpt1_geo-AT+BE+DE+DK+EL+ES+FI+FR+IE+IT+NL+PT+SE_na_item-GD+B9+D41PAY_sector-S13_unit-PC_GDP.json
+d77669aecf49caae8405cecf54553ef47348e645641e991de27cdb34c84817d6  eurostat/gov_10dd_edpt1_geo-EU27_2020_sector-S13_unit-PC_GDP.json
+4fa8fefb01fc519cce3e9bf5f295b0f5001bab6e398c04ed4eed4e1605461c53  eurostat/gov_10dd_edpt1_geo-IT_sector-S13_unit-PC_GDP.json
+41aca20e1052e9ed366c44d883bf2df6f9734617a3cdfb065d9077f175115b89  eurostat/irt_lt_mcby_a_geo-AT+BE+DE+DK+EL+ES+FI+FR+IE+IT+NL+PT+SE.json
+2f80a2300166cb198af3d466167a9cd606d4d95aba6f68b328e8b440b3dc2a1e  eurostat/irt_lt_mcby_a_geo-IT+DE.json
+632ff0340406b14b999dd98cc58ddb9559e1ab4c000dcb6326681ebbb3730571  eurostat/nama_10_gdp_geo-AT+BE+DE+DK+EL+ES+FI+FR+IE+IT+NL+PT+SE_na_item-B1GQ_unit-CLV_PCH_PRE+CP_MEUR.json
+8a3f8ffe14a301ae8646fe2916f2d05771a94c30bbe5c01b33fb8970f28406c7  eurostat/nama_10_gdp_geo-EU27_2020_na_item-B1GQ.json
+58b50c108eec495dbfaa7576a70dbec7fc32c6b7784ec0ff69b84481727a20fd  eurostat/nama_10_gdp_geo-IT_na_item-B1GQ.json
+bacd0d83be00b655c74c0953f1e72c4cbd7fcd24a9625d03993786b660bdf6a0  imf/GGXWDG_NGDP_ITA.json
