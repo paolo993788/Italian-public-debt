@@ -162,8 +162,8 @@ def fan_chart(t, d):
         prob = float(fan["prob_higher_than_start"].iloc[-1])
         ax.set_title(f"{name}\nP(debt in {x[-1]} above {d['start_year']}) = {prob:.0%}", loc="left", fontsize=10,
                      color=t["ink2"])
-        ax.annotate(f"median\n{with_start('p50')[-1]:.0f}%", (x[-1], with_start("p50")[-1]), xytext=(6, 0),
-                    textcoords="offset points", ha="left", va="center", fontsize=9, color=t["ink2"], annotation_clip=False)
+        ax.annotate(f"median\n{with_start('p50')[-1]:.0f}%", (x[-1], with_start("p50")[-1]), xytext=(6, 3),
+                    textcoords="offset points", ha="left", va="bottom", fontsize=9, color=t["ink2"], annotation_clip=False)
         percent_axis(ax)
     from matplotlib.patches import Patch
     from matplotlib.lines import Line2D
