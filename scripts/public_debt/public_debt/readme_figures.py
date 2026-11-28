@@ -42,7 +42,7 @@ def load(official=True, n_paths=100_000) -> dict:
         it, peer = synthetic.fiscal_dataset(seed=5), synthetic.fiscal_dataset(seed=15)
         cof, yields, imf = synthetic.cofog_expenditure(), synthetic.bond_yields(), None
         source = "Synthetic placeholder data, not statistics about Italy ({datasets})"
-    out = {"it": it, "peer": peer, "cof": cof, "yields": yields, "imf": imf, "source": source}
+    out = {"it": it, "peer": peer, "cof": cof, "yields": yields, "imf": imf, "source": source, "n_paths": n_paths}
 
     dec = accounting.debt_decomposition(it)
     last = int(dec.index.max())
@@ -170,7 +170,7 @@ def fan_chart(t, d):
     axes[0].legend(handles=[Line2D([], [], color=c, label="median"), Patch(color=c, alpha=t["band"][1], lw=0, label="50% of paths"),
                             Patch(color=c, alpha=t["band"][0], lw=0, label="90% of paths")], loc="lower left", ncol=3)
     header(fig, t, "Debt ratio projections under alternative fiscal scenarios",
-           "Stochastic debt projections, % of GDP: 100,000 paths with VAR(1) shocks to growth, inflation and rates",
+           f"Stochastic debt projections, % of GDP: {d['n_paths']:,} paths with VAR(1) shocks to growth, inflation and rates",
            d["source"].format(datasets="gov_10dd_edpt1, nama_10_gdp, irt_lt_mcby_a") + "; model in notebook 4, seed 20250101")
     fig.subplots_adjust(top=0.72)
     return fig
